@@ -118,7 +118,7 @@ Failed to communicate with the flash chip, read/write operations will fail
 
 ## References (verified live)
 
-- [ESP32 Pinout Reference (GPIOs)](https://randomnerdtutorials.com/esp32-pinout-reference-gpios/) — pin capabilities, strapping pins, ADC channels
+- [ESP32 Pinout Reference (GPIOs)](hhttps://lastminuteengineers.com/esp32-pinout-reference/) — pin capabilities, strapping pins, ADC channels
 - [The Potentiometer: Pinout, Wiring, and How It Works](https://www.build-electronic-circuits.com/potentiometer/)
 - [Arduino LED Dimmer (Potentiometer + PWM)](https://leecuriosity.com/arduino-led-dimmer-potentiometer-pwm/)
 - [Development Notes & Key Learnings (Notion)](https://app.notion.com/p/Day-1-3a254ef921fa80769a0dc1db6c03625e?source=copy_link)
