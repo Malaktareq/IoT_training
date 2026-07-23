@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "name": "PlatformIO Workspace",
+      "includePath": [
+        "/home/malak/PlatformIO/Projects/week1/day5_Thursday/first_oop_project/include",
+        "/home/malak/PlatformIO/Projects/week1/day5_Thursday/first_oop_project/src",
+        "/home/malak/.platformio/packages/framework-arduinoespressif32/cores/esp32",
+        "/home/malak/.platformio/packages/framework-arduinoespressif32/variants/esp32s3",
+        "/home/malak/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
+        "/home/malak/.platformio/packages/framework-arduinoespressif32/libraries/ESP32/src",
+        "/home/malak/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include",
+        "/home/malak/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/freertos/include",
+        "/home/malak/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/freertos/include/freertos",
+        "/home/malak/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_common/include",
+        "/home/malak/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_system/include"
+      ],
+      "compilerPath": "/usr/bin/g++",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "linux-gcc-x64"
+    }
+  ],
+  "version": 4
+}
