@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atmos // Environmental Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #120f1e;
+    --bg-grid: #17132a;
+    --panel: #1c1830;
+    --panel-hi: #241f3d;
+    --border: #322b52;
+    --accent: #8b5cf6;
+    --accent-2: #c4b5fd;
+    --accent-dim: #4c3d80;
+    --text: #f1eefc;
+    --text-mute: #9089ae;
+    --text-faint: #5f5680;
+    --ok: #34d399;
+    --ok-bg: rgba(52,211,153,0.12);
+    --warn: #fbbf24;
+    --warn-bg: rgba(251,191,36,0.12);
+    --crit: #f87171;
+    --crit-bg: rgba(248,113,113,0.14);
+    --radius: 16px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(139,92,246,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 0%, rgba(196,181,253,0.08), transparent 55%),
+      var(--bg);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 32px 20px 60px;
+  }
+
+  .wrap{ max-width: 980px; margin: 0 auto; }
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:40px; height:40px; border-radius:11px;
+    background: linear-gradient(145deg, var(--accent), #5b3fc4);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 0 0 1px rgba(196,181,253,0.25), 0 6px 18px -4px rgba(139,92,246,0.55);
+    flex-shrink:0;
+  }
+  .brand-mark svg{ width:22px; height:22px; }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .brand-sub{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-faint);
+    margin-top: 3px;
+    letter-spacing: 0.02em;
+  }
+
+  .status-pill{
+    display:flex; align-items:center; gap:9px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 9px 14px 9px 12px;
+    border-radius: 999px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-mute);
+  }
+  .pulse-dot{
+    position: relative;
+    width: 8px; height:8px; border-radius:50%;
+    background: var(--ok);
+    flex-shrink:0;
+  }
+  .pulse-dot::after{
+    content:'';
+    position:absolute; inset:-6px;
+    border-radius:50%;
+    border: 1.5px solid var(--ok);
+    animation: sweep 2.2s ease-out infinite;
+  }
+  .pulse-dot.offline{ background: var(--crit); }
+  .pulse-dot.offline::after{ border-color: var(--crit); animation-duration: 1s; }
+  @keyframes sweep{
+    0%{ transform:scale(0.4); opacity: 0.9; }
+    100%{ transform:scale(2.1); opacity: 0; }
+  }
+
+  /* ---------- Cards grid ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 880px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px){ .grid{ grid-template-columns: 1fr; } }
+
+  .card{
+    background: linear-gradient(180deg, var(--panel-hi), var(--panel));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 20px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .4s ease, box-shadow .4s ease;
+  }
+  .card::before{
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background: var(--accent-dim);
+    transition: background .4s ease, box-shadow .4s ease;
+  }
+  .card.state-ok::before{ background: var(--ok); box-shadow: 0 0 12px var(--ok); }
+  .card.state-warn::before{ background: var(--warn); box-shadow: 0 0 12px var(--warn); }
+  .card.state-crit::before{ background: var(--crit); box-shadow: 0 0 14px var(--crit); }
+  .card.state-warn{ border-color: rgba(251,191,36,0.35); }
+  .card.state-crit{ border-color: rgba(248,113,113,0.4); }
+
+  .card-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px; }
+  .icon-wrap{
+    width: 38px; height:38px; border-radius:10px;
+    background: rgba(139,92,246,0.14);
+    border: 1px solid rgba(139,92,246,0.3);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .icon-wrap svg{ width:19px; height:19px; stroke: var(--accent-2); }
+
+  .badge{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .badge.ok{ color: var(--ok); background: var(--ok-bg); }
+  .badge.warn{ color: var(--warn); background: var(--warn-bg); }
+  .badge.crit{ color: var(--crit); background: var(--crit-bg); }
+
+  .metric-label{
+    font-size: 12px;
+    color: var(--text-mute);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .metric-value{
+    font-family:'Space Grotesk', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .metric-value .unit{
+    font-size: 16px;
+    color: var(--text-mute);
+    font-weight: 500;
+    margin-left: 2px;
+  }
+  .metric-range{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-faint);
+    margin-top: 8px;
+  }
+
+  /* Last update card special */
+  .card.timecard .metric-value{ font-size: 22px; font-family:'JetBrains Mono', monospace; font-weight:500; }
+  .timecard .icon-wrap svg{ animation: tick 4s linear infinite; transform-origin: 50% 50%; }
+  @keyframes tick{ 100%{ transform: rotate(360deg); } }
+
+  /* ---------- Panel: history + actions ---------- */
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 22px 20px;
+    margin-bottom: 20px;
+  }
+  .panel-head{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+  }
+  .panel-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-size: 15px; font-weight: 600;
+  }
+  .panel-title span{ color: var(--text-faint); font-weight: 400; font-size: 12px; margin-left:8px; font-family:'JetBrains Mono', monospace;}
+
+  .dl-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background: linear-gradient(145deg, var(--accent), #6d3fd6);
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-family:'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px -4px rgba(139,92,246,0.6);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .dl-btn:hover{ transform: translateY(-1px); box-shadow: 0 6px 18px -4px rgba(139,92,246,0.75); }
+  .dl-btn:active{ transform: translateY(0); }
+  .dl-btn svg{ width:15px; height:15px; }
+
+  table{ width:100%; border-collapse: collapse; font-family:'JetBrains Mono', monospace; font-size: 12.5px; }
+  thead th{
+    text-align:left; color: var(--text-faint); font-weight:500;
+    padding: 8px 10px; border-bottom: 1px solid var(--border);
+    text-transform: uppercase; font-size: 10.5px; letter-spacing:0.04em;
+  }
+  tbody td{ padding: 9px 10px; border-bottom: 1px solid rgba(50,43,82,0.5); color: var(--text-mute); }
+  tbody tr:last-child td{ color: var(--text); }
+  tbody tr:hover{ background: rgba(139,92,246,0.06); }
+
+  .empty-row td{ text-align:center; color: var(--text-faint); padding: 20px; font-style: normal; }
+
+  footer{
+    text-align:center;
+    color: var(--text-faint);
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px;
+    margin-top: 26px;
+    line-height: 1.7;
+  }
+  footer code{ color: var(--accent-2); }
+
+  @media (prefers-reduced-motion: reduce){
+    .pulse-dot::after, .timecard .icon-wrap svg{ animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2"/></svg>
+      </div>
+      <div>
+        <h1>Atmos // Environmental Monitor</h1>
+        <div class="brand-sub">BME280 &middot; ESP32 &middot; <span id="ipLabel">192.168.1.42</span></div>
+      </div>
+    </div>
+    <div class="status-pill">
+      <span class="pulse-dot" id="pulseDot"></span>
+      <span id="connLabel">Live &middot; polling every 10s</span>
+    </div>
+  </header>
+
+  <section class="grid">
+
+    <!-- Temperature -->
+    <div class="card state-ok" id="tempCard">
+      <div class="card-top">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0Z"/></svg>
+        </div>
+        <span class="badge ok" id="tempBadge">Normal</span>
+      </div>
+      <div class="metric-label">Temperature</div>
+      <div class="metric-value" id="tempValue">--<span class="unit">&deg;C</span></div>
+      <div class="metric-range">Target 18&ndash;27&deg;C</div>
+    </div>
+
+    <!-- Humidity -->
+    <div class="card state-ok" id="humCard">
+      <div class="card-top">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69s6 6.42 6 10.44a6 6 0 1 1-12 0c0-4.02 6-10.44 6-10.44Z"/></svg>
+        </div>
+        <span class="badge ok" id="humBadge">Normal</span>
+      </div>
+      <div class="metric-label">Relative Humidity</div>
+      <div class="metric-value" id="humValue">--<span class="unit">%</span></div>
+      <div class="metric-range">Target 30&ndash;60%</div>
+    </div>
+
+    <!-- Pressure -->
+    <div class="card state-ok" id="presCard">
+      <div class="card-top">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12 8.5 9.5"/><path d="M12 7v1.5"/></svg>
+        </div>
+        <span class="badge ok" id="presBadge">Normal</span>
+      </div>
+      <div class="metric-label">Barometric Pressure</div>
+      <div class="metric-value" id="presValue">--<span class="unit">hPa</span></div>
+      <div class="metric-range">Target 980&ndash;1030 hPa</div>
+    </div>
+
+    <!-- Last update -->
+    <div class="card timecard">
+      <div class="card-top">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        </div>
+      </div>
+      <div class="metric-label">Last Update</div>
+      <div class="metric-value" id="lastUpdateValue">--:--:--</div>
+      <div class="metric-range" id="lastUpdateAgo">waiting for first reading&hellip;</div>
+    </div>
+
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Session Log <span id="rowCountLabel">0 rows buffered</span></div>
+      <button class="dl-btn" id="downloadBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        Download CSV
+      </button>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Timestamp</th><th>Temp (&deg;C)</th><th>Humidity (%)</th><th>Pressure (hPa)</th></tr>
+      </thead>
+      <tbody id="logBody">
+        <tr class="empty-row"><td colspan="4">No readings logged yet</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    Endpoints expected on the ESP32: <code>GET /data</code> returns JSON <code>{temperature, humidity, pressure}</code> &middot; <code>GET /download</code> returns the CSV log file.<br>
+    Running standalone right now, so readings are simulated for preview.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  // ---- Configurable thresholds ----
+  const THRESH = {
+    temp:  { okMin: 18, okMax: 27, warnMin: 15, warnMax: 30 },
+    hum:   { okMin: 30, okMax: 60, warnMin: 20, warnMax: 70 },
+    pres:  { okMin: 980, okMax: 1030, warnMin: 960, warnMax: 1045 }
+  };
+
+  const POLL_MS = 10000;
+  const els = {
+    tempCard: document.getElementById('tempCard'),
+    tempValue: document.getElementById('tempValue'),
+    tempBadge: document.getElementById('tempBadge'),
+    humCard: document.getElementById('humCard'),
+    humValue: document.getElementById('humValue'),
+    humBadge: document.getElementById('humBadge'),
+    presCard: document.getElementById('presCard'),
+    presValue: document.getElementById('presValue'),
+    presBadge: document.getElementById('presBadge'),
+    lastUpdateValue: document.getElementById('lastUpdateValue'),
+    lastUpdateAgo: document.getElementById('lastUpdateAgo'),
+    logBody: document.getElementById('logBody'),
+    rowCountLabel: document.getElementById('rowCountLabel'),
+    pulseDot: document.getElementById('pulseDot'),
+    connLabel: document.getElementById('connLabel'),
+    downloadBtn: document.getElementById('downloadBtn'),
+  };
+
+  let history = [];   // {ts, t, h, p}
+  let lastReadingAt = null;
+  let usingLiveEndpoint = true; // flips to false if /data isn't reachable (e.g. this static preview)
+
+  function classify(value, t){
+    if (value >= t.okMin && value <= t.okMax) return 'ok';
+    if (value >= t.warnMin && value <= t.warnMax) return 'warn';
+    return 'crit';
+  }
+
+  function applyState(cardEl, badgeEl, state){
+    cardEl.classList.remove('state-ok','state-warn','state-crit');
+    cardEl.classList.add('state-' + state);
+    badgeEl.classList.remove('ok','warn','crit');
+    badgeEl.classList.add(state);
+    badgeEl.textContent = state === 'ok' ? 'Normal' : state === 'warn' ? 'Warning' : 'Critical';
+  }
+
+  function fmtTime(d){
+    return d.toTimeString().slice(0,8);
+  }
+
+  function updateAgoLabel(){
+    if (!lastReadingAt) return;
+    const secs = Math.round((Date.now() - lastReadingAt.getTime())/1000);
+    els.lastUpdateAgo.textContent = secs <= 1 ? 'updated just now' : `updated ${secs}s ago`;
+  }
+
+  function renderReading(reading){
+    const now = new Date();
+    lastReadingAt = now;
+
+    els.tempValue.innerHTML = reading.temperature.toFixed(1) + '<span class="unit">&deg;C</span>';
+    els.humValue.innerHTML = reading.humidity.toFixed(0) + '<span class="unit">%</span>';
+    els.presValue.innerHTML = reading.pressure.toFixed(0) + '<span class="unit">hPa</span>';
+
+    applyState(els.tempCard, els.tempBadge, classify(reading.temperature, THRESH.temp));
+    applyState(els.humCard, els.humBadge, classify(reading.humidity, THRESH.hum));
+    applyState(els.presCard, els.presBadge, classify(reading.pressure, THRESH.pres));
+
+    els.lastUpdateValue.textContent = fmtTime(now);
+    updateAgoLabel();
+
+    history.push({ ts: now.toISOString(), t: reading.temperature, h: reading.humidity, p: reading.pressure });
+    if (history.length > 500) history.shift();
+    renderLogTable();
+  }
+
+  function renderLogTable(){
+    els.rowCountLabel.textContent = history.length + ' rows buffered';
+    const recent = history.slice(-8).reverse();
+    if (recent.length === 0){
+      els.logBody.innerHTML = '<tr class="empty-row"><td colspan="4">No readings logged yet</td></tr>';
+      return;
+    }
+    els.logBody.innerHTML = recent.map(r => `
+      <tr>
+        <td>${r.ts.slice(11,19)}</td>
+        <td>${r.t.toFixed(1)}</td>
+        <td>${r.h.toFixed(0)}</td>
+        <td>${r.p.toFixed(0)}</td>
+      </tr>`).join('');
+  }
+
+  function setConnState(live){
+    els.pulseDot.classList.toggle('offline', !live);
+    els.connLabel.textContent = live ? 'Live · polling every 10s' : 'Preview mode · simulated data';
+  }
+
+  // ---- Data source: try the real ESP32 endpoint first, fall back to a simulator ----
+  function simulateReading(){
+    const drift = () => (Math.random() - 0.5);
+    const t = 22 + drift() * 6;
+    const h = 45 + drift() * 30;
+    const p = 1008 + drift() * 40;
+    return { temperature: t, humidity: h, pressure: p };
+  }
+
+  async function poll(){
+    try{
+      const res = await fetch('/data', { cache: 'no-store' });
+      if (!res.ok) throw new Error('bad status');
+      const data = await res.json();
+      usingLiveEndpoint = true;
+      setConnState(true);
+      renderReading(data);
+    } catch(err){
+      // No ESP32 backend reachable (e.g. viewing this file directly) — simulate so the UI stays demonstrable
+      usingLiveEndpoint = false;
+      setConnState(false);
+      renderReading(simulateReading());
+    }
+  }
+
+  function toCsv(rows){
+    const header = 'timestamp,temperature,humidity,pressure';
+    const lines = rows.map(r => `${r.ts},${r.t.toFixed(2)},${r.h.toFixed(2)},${r.p.toFixed(2)}`);
+    return [header, ...lines].join('\n');
+  }
+
+  els.downloadBtn.addEventListener('click', async () => {
+    if (usingLiveEndpoint){
+      // Real device: let the ESP32 serve the authoritative CSV file it has been logging
+      window.location.href = '/download';
+      return;
+    }
+    // Preview mode: build a CSV from the buffered session so the button is still demonstrable
+    const blob = new Blob([toCsv(history)], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sensor_log.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  setInterval(updateAgoLabel, 1000);
+  poll();
+  setInterval(poll, POLL_MS);
+})();
+</script>
+</body>
+</html>
