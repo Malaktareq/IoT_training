@@ -17,7 +17,7 @@ bool MQTT::begin()
     if(mqttClient.connect("ESP32_MQTT"))
     {
         Serial.println("MQTT connected");
-        mqttClient.subscribe("sensor/data/cyber");
+        mqttClient.subscribe(MQTT_SUBSCRIBE_TOPIC);
         return true;
     }
     Serial.println("MQTT connection failed");

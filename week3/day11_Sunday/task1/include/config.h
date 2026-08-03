@@ -24,4 +24,8 @@ constexpr uint8_t  IR_PIN = 5;
 // MQTT Broker
 #define MQTT_SERVER "broker.emqx.io"
 #define MQTT_PORT 1883
+
+// MQTT Topics
+#define MQTT_PUBLISH_TOPIC "sensor/data/cyber"
+#define MQTT_SUBSCRIBE_TOPIC "sensor/control/cyber"
 #endif // CONFIG_H

@@ -35,12 +35,12 @@ void loop()
   if (digitalRead(IR_PIN) == HIGH)
   {
     Serial.println("Object detected");
-    mqt.publish("sensor/data/cyber", "1");
+    mqt.publish(MQTT_PUBLISH_TOPIC, "1");
   }
   else
   {
     Serial.println("No object detected");
-    mqt.publish("sensor/data/cyber", "0");
+    mqt.publish(MQTT_PUBLISH_TOPIC, "0");
   }
   mqt.getClient().loop();
 }
@@ -55,6 +55,10 @@ void pinsSetup()
 
 void mqttCallback(char *topic, byte *payload, unsigned int length) 
 {
+  if (String(topic) != MQTT_SUBSCRIBE_TOPIC) {
+    return;
+  }
+
   String message;
   lastDetectionTime = millis();
   for (unsigned int i = 0; i < length; i++) 
