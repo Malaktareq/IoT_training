@@ -5,8 +5,9 @@
 
 MQTT mqt;
 L298N motor(MOTOR_DIR_PIN2, MOTOR_SPEED_PIN1, MOTOR_ENA);
+void mqttCallback(char *topic, byte *payload, unsigned int length);
 
- unsigned long volatile lastDetectionTime;
+unsigned long volatile lastDetectionTime;
 const int detectionTimeout = 2000;
 
 void pinsSetup();
@@ -21,6 +22,7 @@ void setup()
   }
   mqt.getClient().setCallback(mqttCallback);
   lastDetectionTime = millis();
+  motor.forward(255);
 }
 
 void loop()
@@ -30,16 +32,15 @@ void loop()
     digitalWrite(RUNNING_LED_PIN, LOW);
     digitalWrite(STOP_LED_PIN, HIGH);
     motor.stop();
-    return;
   }
-  if (digitalRead(IR_PIN) == HIGH)
+  else if (digitalRead(IR_PIN) == HIGH)
   {
-    Serial.println("Object detected");
+    Serial.println("NO Object detected");
     mqt.publish(MQTT_PUBLISH_TOPIC, "1");
   }
   else
   {
-    Serial.println("No object detected");
+    Serial.println("Object detected");
     mqt.publish(MQTT_PUBLISH_TOPIC, "0");
   }
   mqt.getClient().loop();
