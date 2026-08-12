@@ -96,22 +96,14 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
 void ensureConnections()
 {
     unsigned long currentMillis;
-
-    if (WiFi.status() != WL_CONNECTED)
-    {
-        applyMotorHardware(motor, targetDirection, targetSpeedPer, targetPower, client);
-        WiFi.reconnect();
-        currentMillis = millis();
-        while (WiFi.status() != WL_CONNECTED && millis() - currentMillis < 10000)
-            delay(500);
-    }
     if (WiFi.status() == WL_CONNECTED && !client.connected())
     {
         applyMotorHardware(motor, targetDirection, targetSpeedPer, targetPower, client);
-        client.connect("ESP32Client");
+        client.connect("ESP32Client","esp32/status",1,true,"offline");
         if (client.connected())
         {
             client.subscribe("esp32/motor/cmd/#");
+            client.publish("esp32/status", "online", true);
             publishMotorStatus(motor, client);
         }
     }
