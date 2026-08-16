@@ -1,0 +1,152 @@
+{
+  "history": {
+    "-P-9Y3tt4Z8DJnRqqwmW": {
+      "direction": "stopped",
+      "humidity": 35.51,
+      "motor_running": "stopped",
+      "pressure": 894.29,
+      "speed": 0,
+      "temperature": 24.64,
+      "timestamp": 1786883363695
+    },
+    "-P-9Y7Z8wQ741fysntfB": {
+      "direction": "stopped",
+      "humidity": 37.19,
+      "motor_running": "stopped",
+      "pressure": 894.26,
+      "speed": 0,
+      "temperature": 24.6,
+      "timestamp": 1786883378699
+    },
+    "-P-9YBDdOvh_MgP0TI_-": {
+      "direction": "stopped",
+      "humidity": 37.22,
+      "motor_running": "stopped",
+      "pressure": 894.29,
+      "speed": 0,
+      "temperature": 24.6,
+      "timestamp": 1786883393702
+    },
+    "-P-9YEtAw1FVA5WJIkwM": {
+      "direction": "stopped",
+      "humidity": 37.29,
+      "motor_running": "stopped",
+      "pressure": 894.26,
+      "speed": 0,
+      "temperature": 24.61,
+      "timestamp": 1786883408709
+    },
+    "-P-9YIYdm_voTst-b8Xy": {
+      "direction": "backward",
+      "humidity": 36.5,
+      "motor_running": "running",
+      "pressure": 894.27,
+      "speed": 65,
+      "temperature": 24.47,
+      "timestamp": 1786883423714
+    },
+    "-P-9YMD13ngho79-FGec": {
+      "direction": "forward",
+      "humidity": 38.14,
+      "motor_running": "running",
+      "pressure": 894.27,
+      "speed": 65,
+      "temperature": 24.43,
+      "timestamp": 1786883438715
+    },
+    "-P-9YPsYmmmffAW-5YAF": {
+      "direction": "forward",
+      "humidity": 38.08,
+      "motor_running": "running",
+      "pressure": 894.24,
+      "speed": 65,
+      "temperature": 24.41,
+      "timestamp": 1786883453725
+    },
+    "-P-9YTY7vSXzqeo3oxex": {
+      "direction": "forward",
+      "humidity": 38.83,
+      "motor_running": "running",
+      "pressure": 894.28,
+      "speed": 65,
+      "temperature": 24.66,
+      "timestamp": 1786883468739
+    },
+    "-P-9YXC_kljMEFWxjBXU": {
+      "direction": "forward",
+      "humidity": 39.68,
+      "motor_running": "running",
+      "pressure": 894.27,
+      "speed": 65,
+      "temperature": 25.2,
+      "timestamp": 1786883483752
+    },
+    "-P-9Y_s8A1kz4UJm3FeU": {
+      "direction": "forward",
+      "humidity": 39.32,
+      "motor_running": "running",
+      "pressure": 894.27,
+      "speed": 65,
+      "temperature": 25.64,
+      "timestamp": 1786883498755
+    },
+    "-P-9YdXbgXCvSF4I6ie6": {
+      "direction": "forward",
+      "humidity": 39.49,
+      "motor_running": "running",
+      "pressure": 894.24,
+      "speed": 65,
+      "temperature": 26.01,
+      "timestamp": 1786883513761
+    },
+    "-P-9YhC2Ndr5R8PSo0yx": {
+      "direction": "forward",
+      "humidity": 39.16,
+      "motor_running": "running",
+      "pressure": 894.24,
+      "speed": 65,
+      "temperature": 26.44,
+      "timestamp": 1786883528767
+    },
+    "-P-9YkrQBH0oOJIrjfR1": {
+      "direction": "forward",
+      "humidity": 38.6,
+      "motor_running": "running",
+      "pressure": 894.25,
+      "speed": 65,
+      "temperature": 26.74,
+      "timestamp": 1786883543767
+    },
+    "-P-9YoWiIoFLbxbRHXgS": {
+      "direction": "forward",
+      "humidity": 37.97,
+      "motor_running": "running",
+      "pressure": 894.22,
+      "speed": 65,
+      "temperature": 26.9,
+      "timestamp": 1786883558769
+    },
+    "-P-9YsB79ItwJtnAkq6l": {
+      "direction": "forward",
+      "humidity": 37.01,
+      "motor_running": "running",
+      "pressure": 894.22,
+      "speed": 65,
+      "temperature": 27.08,
+      "timestamp": 1786883573773
+    }
+  },
+  "live": {
+    "direction": "forward",
+    "humidity": 36.56,
+    "motor_running": "running",
+    "pressure": 894.24,
+    "speed": 65,
+    "temperature": 27.1,
+    "timestamp": 1786883581086
+  },
+  "test": {
+    "message": "hello firebase",
+    "status": "ok"
+  }
+}
