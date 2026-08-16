@@ -96,32 +96,6 @@ See `docs/circuit_diagram.png` for the full wiring diagram.
 
 ---
 
-## Repository Structure
-
-```
-.
-├── firmware/
-│   ├── src/
-│   │   ├── main.cpp              # setup(), loop(), MQTT callback, failsafe engine
-│   │   └── L298N.cpp             # Motor driver class (forward/reverse/stop/brake)
-│   ├── include/
-│   │   ├── L298N.h
-│   │   └── config.h              # Wi-Fi / broker credentials, pins, topics
-│   └── platformio.ini
-├── broker/
-│   └── mosquitto.conf            # Broker config used for this project
-├── docs/
-│   ├── Day14_15_MQTT_Broker_Technical_Report.docx
-│   ├── circuit_diagram.png
-│   └── screenshots/
-│       ├── mqtt_explorer_connection.jpg
-│       ├── wsl_nat_diagnostics.jpg
-│       └── final_verification.jpg
-└── README.md
-```
-
----
-
 ## Part 1 — Broker Setup
 
 All commands below run **inside WSL 2 (Ubuntu)** unless marked *PowerShell*.
@@ -247,7 +221,6 @@ client connection in the running `mosquitto -c mosquitto.conf -v` terminal.
 
 | Requirement | Implementation |
 |---|---|
-| Non-blocking sensor timing | `loop()` compares `millis()` against a stored `lastMsgTime`; BME280 is read/published only once the interval (2000 ms) has elapsed — no `delay()` blocking. |
 | Status reflects real state, not last command | `publishMotorStatus()` reads `motor.getSpeed()` / `motor.getDirection()` **directly from the L298N driver**, never from the last received command. |
 | Speed validation & clamping | Every `esp32/motor/speed` payload is parsed with `message.toInt()` and passed through `constrain(value, 0, 100)` before it is stored or applied. |
 | Reconnect handling (no crash, safe stop) | `ensureConnections()` checks `WiFi.status()` / `client.connected()` every loop pass. On any disconnect it immediately forces `motor.stop()`, then retries inside a bounded, non-blocking window and auto-resubscribes once reconnected. |
