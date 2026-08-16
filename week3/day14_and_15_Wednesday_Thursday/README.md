@@ -5,7 +5,7 @@ that publishes live BME280 environmental telemetry and accepts full motor
 control (power, direction, speed) over MQTT — with true hardware-state
 feedback and a network failsafe that stops the motor safely on disconnect.
 
-> **Day 14 + Day 15** deliverable — see [`docs/Day14_15_MQTT_Broker_Technical_Report.docx`](./docs/Day14_15_MQTT_Broker_Technical_Report.docx)
+> **Day 14 + Day 15** deliverable — see [`reports/Day14_15_MQTT_Broker_Technical_Report.docx`](./reports/Day14_15_MQTT_Broker_Technical_Report.docx)
 > for the full write-up (network diagnostics, firewall/NAT walkthrough,
 > function-by-function firmware breakdown, and verification screenshots).
 
@@ -92,7 +92,23 @@ device can reach a broker running inside WSL 2:
 | IR Obstacle Sensor | Auxiliary digital input (breadboard) |
 | Bench PSU / 12V supply | Powers the L298N / motor rail |
 
-See `docs/circuit_diagram.png` for the full wiring diagram.
+See `circuit_image.png` for the full wiring diagram.
+
+---
+
+## Repository Structure
+
+| Path | Purpose |
+|---|---|
+| `local_broker/platformio.ini` | PlatformIO environment and library dependencies |
+| `local_broker/include/config.h` | Wi-Fi, MQTT, and pin configuration |
+| `local_broker/include/project.h` | Function declarations shared across source files |
+| `local_broker/include/L298N.h` | Motor driver interface |
+| `local_broker/src/main.cpp` | ESP32 setup, loop, MQTT callback, telemetry |
+| `local_broker/src/motor.cpp` | Motor application and status publishing |
+| `local_broker/src/L298N.cpp` | Low-level L298N driver implementation |
+| `reports/` | Technical report and deliverable documents |
+| `circuit_image.png` | Wiring diagram |
 
 ---
 
@@ -223,14 +239,14 @@ client connection in the running `mosquitto -c mosquitto.conf -v` terminal.
 |---|---|
 | Status reflects real state, not last command | `publishMotorStatus()` reads `motor.getSpeed()` / `motor.getDirection()` **directly from the L298N driver**, never from the last received command. |
 | Speed validation & clamping | Every `esp32/motor/speed` payload is parsed with `message.toInt()` and passed through `constrain(value, 0, 100)` before it is stored or applied. |
-| Reconnect handling (no crash, safe stop) | `ensureConnections()` checks `WiFi.status()` / `client.connected()` every loop pass. On any disconnect it immediately forces `motor.stop()`, then retries inside a bounded, non-blocking window and auto-resubscribes once reconnected. |
+| Reconnect handling (no crash, safe stop) | `ensureConnections()` checks `WiFi.status()` / `client.connected()` every loop pass. On any disconnect it immediately forces `motor.stop()`, then retries for up to 10 seconds and auto-resubscribes once reconnected. |
 
 ### Key firmware functions
 
 | Function | Responsibility |
 |---|---|
 | `setup()` | Serial, motor driver, I2C/BME280 probe (`0x76`/`0x77`), Wi-Fi, MQTT client/callback registration |
-| `loop()` | Non-blocking scheduler: network servicing, timed telemetry publish, continuous motor hardware application |
+| `loop()` | Scheduler for network servicing, timed telemetry publish, and periodic motor re-application between telemetry intervals |
 | `mqttCallback()` | Parses incoming payloads, routes by topic, clamps speed, re-applies hardware + republishes status |
 | `ensureConnections()` | Wi-Fi/MQTT reconnect logic with a bounded retry window and forced motor stop on disconnect |
 | `applyMotorHardware()` | Single choke point for driving the motor — refuses to drive unless Wi-Fi + MQTT + power are all valid |
@@ -240,15 +256,15 @@ client connection in the running `mosquitto -c mosquitto.conf -v` terminal.
 
 ## ESP32 Firmware Setup
 
-1. Open `firmware/` in PlatformIO (VS Code) or the Arduino IDE.
-2. Edit `firmware/include/config.h`:
+1. Open `local_broker/` in PlatformIO (VS Code).
+2. Edit `local_broker/include/config.h`:
    ```cpp
    #define WIFI_SSID     "your_wifi_ssid"
    #define WIFI_PASSWORD "your_wifi_password"
    #define MQTT_BROKER   "192.168.1.105"   // Windows LAN IP running mosquitto
    #define MQTT_PORT     1883
    ```
-3. Wire the hardware per `docs/circuit_diagram.png`.
+3. Wire the hardware per `circuit_image.png`.
 4. Build and flash:
    ```bash
    pio run -t upload
@@ -267,10 +283,10 @@ client connection in the running `mosquitto -c mosquitto.conf -v` terminal.
 3. Open MQTT Explorer, connect, and confirm `esp32/sensor/*` and
    `esp32/motor/*` are updating live.
 4. Publish commands from MQTT Explorer's **Publish** panel:
-   - `esp32/motor/power` → `on`
-   - `esp32/motor/direction` → `forward`
-   - `esp32/motor/speed` → `50`
-5. Confirm the motor responds and `esp32/motor/state` / `speed` /
+   - `esp32/motor/cmd/power` → `on`
+   - `esp32/motor/cmd/direction` → `forward`
+   - `esp32/motor/cmd/speed` → `50`
+5. Confirm the motor responds and `esp32/motor/power` / `speed` /
    `direction` update to match — live, not just echoing the command.
 6. **Failsafe check:** stop the broker or disable Wi-Fi on the ESP32's
    access point. The motor should stop immediately. Restart the broker /
