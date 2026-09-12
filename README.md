@@ -128,6 +128,3 @@ Depending on the activity, each day may contain:
 - **Real-time systems:** FreeRTOS tasks, priorities, delays, queues, timeouts, and logging.
 - **Industrial systems:** CNC controllers, stepper drivers, homing, limit switches, electrical isolation, grounding, and safety interlocks.
 
-## Security Note
-
-Wi-Fi credentials, passwords, and local network details are intentionally excluded from this repository. Placeholder values must be replaced locally before building or uploading a project.
