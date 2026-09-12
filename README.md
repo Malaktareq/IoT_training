@@ -11,6 +11,12 @@ This repository documents the practical work, code, reports, circuit diagrams, a
 
 The training combined embedded programming, electronics, networking, IoT communication, real-time systems, and industrial CNC applications. The work progressed from basic ESP32 exercises to connected safety systems, dashboards, cloud data logging, RTOS applications, and a final smart CNC monitoring project.
 
+## Training Notes and Study Sheets
+
+My complete training notes and study sheets are organized in Notion by day and topic. They include detailed explanations, code breakdowns, technical concepts, troubleshooting notes, task documentation, and the final Smart CNC Monitoring and Safety System project.
+
+📘 **[Open the IoT Training Notes and Study Sheets](https://app.notion.com/p/IoT-training-33754ef921fa8057952be1b49d10fbe4?source=copy_link)**
+
 ## Work Completed by Week
 
 | Week | Main Work Completed |
