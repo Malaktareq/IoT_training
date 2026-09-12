@@ -15,9 +15,9 @@ constexpr uint8_t EN_PIN = 18;
 constexpr uint8_t IN2_PIN = 3;
 constexpr uint8_t IN1_PIN = 19;
 
-#define WIFI_SSID "CYBER_EXT"
-#define WIFI_PASSWORD "cyberap2025"
-#define MQTT_BROKER "192.168.1.107"
+#define WIFI_SSID "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+#define MQTT_BROKER "YOUR_MQTT_BROKER_IP"
 const uint16_t MQTT_PORT = 1883;
 
 #endif 

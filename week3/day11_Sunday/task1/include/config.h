@@ -17,8 +17,8 @@ constexpr uint8_t  STOP_LED_PIN = 7;
 
 constexpr uint8_t  IR_PIN = 5;
 // WiFi
-#define WIFI_SSID "CYBER_EXT"
-#define WIFI_PASSWORD "cyberap2025"
+#define WIFI_SSID "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
 
 
 // MQTT Broker

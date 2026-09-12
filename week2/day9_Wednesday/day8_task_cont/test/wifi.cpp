@@ -6,8 +6,8 @@
 #include <WiFi.h>
 
 // Replace with your own network credentials
-const char* ssid = "CYBER_EXT";
-const char* password = "cyberap2025";
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
 
 void setup(){
 

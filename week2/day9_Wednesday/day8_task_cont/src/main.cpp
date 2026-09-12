@@ -5,8 +5,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-const char* ssid = "esp32_ap";
-const char* password = "malak1234";
+const char* ssid = "YOUR_AP_SSID";
+const char* password = "YOUR_AP_PASSWORD";
 
 void createCSV();
 void saveData();

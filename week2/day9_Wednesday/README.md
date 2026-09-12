@@ -51,8 +51,8 @@ lib_deps =
 
 Set your network name and password in the firmware:
 ```cpp
-const char* AP_SSID     = "ESP32_Monitor";
-const char* AP_PASSWORD = "12345678";   // minimum 8 characters
+const char* AP_SSID     = "YOUR_AP_SSID";
+const char* AP_PASSWORD = "YOUR_AP_PASSWORD";   // minimum 8 characters
 ```
 
 ### 3. Set the BME280 I2C address
@@ -69,7 +69,7 @@ Upload the `data/` folder (contains `index.html`) to SPIFFS/LittleFS, then flash
 ### 5. Connect and view the dashboard
 
 1. Power on the ESP32
-2. On your laptop or phone, join the **ESP32_Monitor** Wi-Fi network
+2. On your laptop or phone, join the **YOUR_AP_SSID** Wi-Fi network
 3. Open a browser to `http://192.168.4.1`
 
 ## API
@@ -106,7 +106,7 @@ Upload the `data/` folder (contains `index.html`) to SPIFFS/LittleFS, then flash
 ## Troubleshooting
 
 - **BME280 not found** — double-check wiring and confirm the I2C address with a scanner sketch (`Wire.begin(21, 22)` + address sweep 1–127).
-- **Can't see the ESP32_Monitor network** — make sure `WiFi.mode(WIFI_AP)` runs before `WiFi.softAP()`, and that the password is at least 8 characters.
+- **Can't see the YOUR_AP_SSID network** — make sure `WiFi.mode(WIFI_AP)` runs before `WiFi.softAP()`, and that the password is at least 8 characters.
 - **Dashboard doesn't load** — confirm `index.html` was uploaded to SPIFFS/LittleFS, not just compiled into the sketch.
 
 ## License

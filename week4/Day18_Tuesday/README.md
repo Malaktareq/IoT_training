@@ -85,9 +85,9 @@ Before compiling and uploading, update the Wi‑Fi and MQTT settings in:
 The current values are:
 
 ```cpp
-#define WIFI_SSID "CYBER_EXT"
-#define WIFI_PASSWORD "cyberap2025"
-#define MQTT_BROKER "192.168.1.107"
+#define WIFI_SSID "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+#define MQTT_BROKER "YOUR_MQTT_BROKER_IP"
 const uint16_t MQTT_PORT = 1883;
 ```
 
